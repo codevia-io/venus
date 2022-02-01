@@ -1,4 +1,8 @@
 {
+    "name": "codevia/venus",
+    "description": "A lightweigth PHP framework for building web applications",
+    "license": "MIT",
+    "homepage": "https://github.com/Codevia-io/venus",
     "require": {
         "doctrine/orm": "^2.11",
         "doctrine/cache": "^1.11",
