@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "de7ed149cc7a2815cca11a7d7edef0df",
+    "content-hash": "54d95c6cde6dd5d20c98ad6047fbfc05",
     "packages": [
         {
             "name": "doctrine/cache",
@@ -1198,6 +1198,59 @@
                 "source": "https://github.com/middlewares/fast-route/tree/v2.0.1"
             },
             "time": "2020-12-02T00:05:59+00:00"
+        },
+        {
+            "name": "middlewares/php-session",
+            "version": "v3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/middlewares/php-session.git",
+                "reference": "d95c5d321ba0b367d181391df5d85e3e82fe05d7"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/middlewares/php-session/zipball/d95c5d321ba0b367d181391df5d85e3e82fe05d7",
+                "reference": "d95c5d321ba0b367d181391df5d85e3e82fe05d7",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.2 || ^8.0",
+                "psr/http-server-middleware": "^1.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.0",
+                "laminas/laminas-diactoros": "^2.3",
+                "middlewares/utils": "^3.0",
+                "oscarotero/php-cs-fixer-config": "^1.0",
+                "phpstan/phpstan": "^0.12",
+                "phpunit/phpunit": "^8|^9",
+                "squizlabs/php_codesniffer": "^3.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Middlewares\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "Middleware to start php sessions using the request data",
+            "homepage": "https://github.com/middlewares/php-session",
+            "keywords": [
+                "http",
+                "middleware",
+                "psr-15",
+                "psr-7",
+                "server",
+                "session"
+            ],
+            "support": {
+                "issues": "https://github.com/middlewares/php-session/issues",
+                "source": "https://github.com/middlewares/php-session/tree/v3.1.0"
+            },
+            "time": "2021-11-05T15:24:45+00:00"
         },
         {
             "name": "middlewares/request-handler",
@@ -2566,7 +2619,9 @@
     "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
-    "platform": [],
+    "platform": {
+        "php": "^8.0"
+    },
     "platform-dev": [],
     "plugin-api-version": "2.2.0"
 }
