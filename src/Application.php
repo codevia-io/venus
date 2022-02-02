@@ -58,13 +58,16 @@ class Application
 
         $dispatcher = new Dispatcher([
             new \Middlewares\Emitter(),
+
             new ErrorHandler([
                 new JsonFormatter()
             ]),
-            $session,
+
             (new \Middlewares\PhpSession())->name('VENUSSESSID')
                 ->regenerateId(60), // Prevent session fixation attacks
+
             (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
+
             (new RequestHandler($container))->handlerAttribute('handler'),
         ]);
 
