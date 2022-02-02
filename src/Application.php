@@ -56,16 +56,14 @@ class Application
         );
         $container = new RequestHandlerContainer();
 
-        $session = new \Middlewares\PhpSession();
-        $session->name('VENUSSESSID')
-            ->regenerateId(60); // Prevent session fixation attacks
-
         $dispatcher = new Dispatcher([
             new \Middlewares\Emitter(),
             new ErrorHandler([
                 new JsonFormatter()
             ]),
             $session,
+            (new \Middlewares\PhpSession())->name('VENUSSESSID')
+                ->regenerateId(60), // Prevent session fixation attacks
             (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
             (new RequestHandler($container))->handlerAttribute('handler'),
         ]);
