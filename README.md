@@ -56,6 +56,7 @@ class FooController extends Controller
     public function getBar(ServerRequest $request, RequestHandler $handler): ResponseInterface
     {
         // Your code ...
+        return $this->createResponse($request, $handler, $content);
     }
     
     // Other controllers ...
