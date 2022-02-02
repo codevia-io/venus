@@ -1,8 +1,8 @@
- <?php
+<?php
 
- namespace Codevia\Venus;
+namespace Codevia\Venus;
 
- class Application
- {
 
- }
+class Application
+{
+}
