@@ -4,6 +4,7 @@ namespace Codevia\Venus;
 
 use Codevia\Venus\Utils\Http\Input\InputInterface;
 use Codevia\Venus\Utils\RequestHandler;
+use DI\Container;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
@@ -15,6 +16,7 @@ class Application
 {
     private InputInterface $inputAdapter;
     private FastRouteDispatcher $dispatcher;
+    private Container $container;
 
     /**
      * Set the input adapter that corresponds to the format you are working with.
@@ -41,6 +43,18 @@ class Application
     }
 
     /**
+     * Set the container to use with middlewares.
+     *
+     * @param Container $container
+     * @return Application
+     */
+    public function setContainer(Container $container): self
+    {
+        $this->container = $container;
+        return $this;
+    }
+
+    /**
      * Execute the application logic
      *
      * @return void
@@ -54,7 +68,6 @@ class Application
             $_COOKIE,
             $_FILES
         );
-        $container = new RequestHandlerContainer();
 
         $dispatcher = new Dispatcher([
             new \Middlewares\Emitter(),
@@ -68,7 +81,7 @@ class Application
 
             (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
 
-            (new RequestHandler($container))->handlerAttribute('handler'),
+            (new RequestHandler($this->container))->handlerAttribute('handler'),
         ]);
 
         $dispatcher->dispatch($request);
