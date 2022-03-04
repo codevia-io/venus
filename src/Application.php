@@ -3,20 +3,21 @@
 namespace Codevia\Venus;
 
 use Codevia\Venus\Utils\Http\Input\InputInterface;
-use Codevia\Venus\Utils\RequestHandler;
 use DI\Container;
+use DI\ContainerBuilder;
 use FastRoute\Dispatcher as FastRouteDispatcher;
 use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\Utils\RequestHandlerContainer;
+use Middlewares\RequestHandler;
+use Psr\Container\ContainerInterface;
 
 class Application
 {
     private InputInterface $inputAdapter;
     private FastRouteDispatcher $dispatcher;
-    private Container $container;
+    private ?ContainerInterface $container = null;
 
     /**
      * Set the input adapter that corresponds to the format you are working with.
@@ -45,13 +46,23 @@ class Application
     /**
      * Set the container to use with middlewares.
      *
-     * @param Container $container
+     * @param ContainerInterface $container
      * @return Application
      */
-    public function setContainer(Container $container): self
+    public function setContainer(ContainerInterface $container): self
     {
         $this->container = $container;
         return $this;
+    }
+
+    public function getContainer(): ContainerInterface | Container
+    {
+        if ($this->container === null) {
+            $builder = new ContainerBuilder();
+            $builder->useAnnotations(true);
+            $this->container = $builder->build();
+        }
+        return $this->container;
     }
 
     /**
@@ -81,7 +92,7 @@ class Application
 
             (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
 
-            (new RequestHandler($this->container))->handlerAttribute('handler'),
+            (new RequestHandler($this->getContainer()))->handlerAttribute('handler'),
         ]);
 
         $dispatcher->dispatch($request);
