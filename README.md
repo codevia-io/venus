@@ -58,7 +58,7 @@ class FooController extends Controller
         // Your code ...
         return $this->createResponse($request, $handler, $content);
     }
-    
+
     // Other controllers ...
 }
 ```
@@ -111,4 +111,3 @@ RewriteRule ^ example.php [QSA,L]
  	}
  }
  ```
- 
