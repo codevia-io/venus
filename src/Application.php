@@ -3,66 +3,23 @@
 namespace Codevia\Venus;
 
 use Codevia\Venus\Middleware\RequestHandler;
-use Codevia\Venus\Utils\Http\Input\InputInterface;
-use DI\Container;
-use DI\ContainerBuilder;
-use FastRoute\Dispatcher as FastRouteDispatcher;
 use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
-use Psr\Container\ContainerInterface;
 
 class Application
 {
-    private InputInterface $inputAdapter;
-    private FastRouteDispatcher $dispatcher;
-    private ?ContainerInterface $container = null;
+    private Config $config;
 
-    /**
-     * Set the input adapter that corresponds to the format you are working with.
-     *
-     * @param InputInterface $inputAdapter
-     * @return Application
-     */
-    public function setInputAdapter(InputInterface $inputAdapter): self
+    public function __construct()
     {
-        $this->inputAdapter = $inputAdapter;
-        return $this;
+        $this->config = new Config();
     }
 
-    /**
-     * Set the dispatcher with route definitions.
-     *
-     * @param FastRouteDispatcher $dispatcher
-     * @return Application
-     */
-    public function setDispatcher(FastRouteDispatcher $dispatcher): self
+    public function getConfig(): Config
     {
-        $this->dispatcher = $dispatcher;
-        return $this;
-    }
-
-    /**
-     * Set the container to use with middlewares.
-     *
-     * @param ContainerInterface $container
-     * @return Application
-     */
-    public function setContainer(ContainerInterface $container): self
-    {
-        $this->container = $container;
-        return $this;
-    }
-
-    public function getContainer(): ContainerInterface | Container
-    {
-        if ($this->container === null) {
-            $builder = new ContainerBuilder();
-            $builder->useAnnotations(true);
-            $this->container = $builder->build();
-        }
-        return $this->container;
+        return $this->config;
     }
 
     /**
@@ -75,7 +32,7 @@ class Application
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
             $_GET,
-            $this->inputAdapter::getParsedBody(),
+            $this->getConfig()->getInputAdapter()::getParsedBody(),
             $_COOKIE,
             $_FILES
         );
@@ -90,9 +47,9 @@ class Application
             (new \Middlewares\PhpSession())->name('VENUSSESSID')
                 ->regenerateId(60), // Prevent session fixation attacks
 
-            (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
+            (new \Middlewares\FastRoute($this->getConfig()->getDispatcher()))->attribute('handler'),
 
-            (new RequestHandler($this->getContainer()))->handlerAttribute('handler'),
+            (new RequestHandler($this->getConfig()->getContainer()))->handlerAttribute('handler'),
         ]);
 
         $dispatcher->dispatch($request);
