@@ -2,6 +2,7 @@
 
 namespace Codevia\Venus;
 
+use Codevia\Venus\Middleware\RequestHandler;
 use Codevia\Venus\Utils\Http\Input\InputInterface;
 use DI\Container;
 use DI\ContainerBuilder;
@@ -10,7 +11,6 @@ use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\RequestHandler;
 use Psr\Container\ContainerInterface;
 
 class Application
