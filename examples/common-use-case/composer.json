@@ -1,0 +1,16 @@
+{
+    "require": {
+        "codevia/venus": "@dev"
+    },
+    "repositories": [
+        {
+            "type": "path",
+            "url": "../../"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "Example\\": "src/"
+        }
+    }
+}
