@@ -3,6 +3,7 @@
 namespace Codevia\Venus;
 
 use Codevia\Venus\Utils\Http\Input\InputInterface;
+use Codevia\Venus\Utils\Permission\PermissionList;
 use DI\Container;
 use DI\ContainerBuilder;
 use FastRoute\Dispatcher;
@@ -13,6 +14,7 @@ class Config
     private InputInterface $inputAdapter;
     private Dispatcher $dispatcher;
     private ?ContainerInterface $container = null;
+    private PermissionList $permissions;
 
     public function getInputAdapter(): InputInterface
     {
@@ -68,5 +70,11 @@ class Config
     {
         $this->container = $container;
         return $this;
+    }
+
+    public function setPermisions(PermissionList $permissions)
+    {
+        $this->permissions = $permissions;
+        $this->getContainer()->set(PermissionList::class, $this->permissions);
     }
 }
