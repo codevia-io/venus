@@ -2,6 +2,7 @@
 
 namespace Codevia\Venus;
 
+use Codevia\Venus\Middleware\Permission;
 use Codevia\Venus\Middleware\RequestHandler;
 use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
@@ -49,11 +50,15 @@ class Application
             $this->getConfig()->getDispatcher()
         ))->attribute('handler');
 
+        $queue[] = (new Permission(
+            $this->getConfig()->getContainer()
+        ))->handlerAttribute('handler');
+
         $queue[] = (new RequestHandler(
             $this->getConfig()->getContainer()
         ))->handlerAttribute('handler');
 
-        $dispatcher = new Dispatcher([$queue]);
+        $dispatcher = new Dispatcher($queue);
         $dispatcher->dispatch($request);
     }
 }

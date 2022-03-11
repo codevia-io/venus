@@ -3,6 +3,7 @@
 namespace Codevia\Venus\Middleware;
 
 use Codevia\Venus\Utils\Permission\PermissionList;
+use Middlewares\Utils\HttpErrorException;
 use Middlewares\Utils\RequestHandlerContainer;
 use Psr\Container\ContainerInterface;
 use Psr\Http\Message\ServerRequestInterface;
@@ -89,10 +90,14 @@ class Permission implements MiddlewareInterface
             && is_int($requestHandler[2])
         ) {
             /** @var PermissionList */
-            $permissions = $this->container->get('PermissionList');
+            $permissions = $this->container->get(PermissionList::class);
             $permissions->checkValidity();
 
-            $this->checkMask($requestHandler[2], $_SESSION['permission'] ?? 0);
+            $isValid = $this->checkMask($requestHandler[2], $_SESSION['permission'] ?? 0);
+
+            if (!$isValid) {
+                throw new HttpErrorException("You don't have permission to access this resource.", 403);
+            }
         }
 
         return $handler->handle($request);
