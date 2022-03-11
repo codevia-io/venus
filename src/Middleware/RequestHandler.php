@@ -1,11 +1,13 @@
 <?php
 
-namespace Codevia\Venus\Utils;
+namespace Codevia\Venus\Middleware;
 
+use Codevia\Venus\Controller\Controller;
+use Middlewares\Utils\CallableHandler;
 use Middlewares\Utils\RequestHandlerContainer;
 use Psr\Container\ContainerInterface;
-use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use RuntimeException;
@@ -58,7 +60,8 @@ class RequestHandler implements MiddlewareInterface
     /**
      * Process a server request and return a response.
      */
-    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface {
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    {
         $requestHandler = $request->getAttribute($this->handlerAttribute);
 
         if (empty($requestHandler)) {
@@ -69,18 +72,30 @@ class RequestHandler implements MiddlewareInterface
             throw new RuntimeException('Empty request handler');
         }
 
+        if (is_string($requestHandler)) {
+            $requestHandler = $this->container->get($requestHandler);
+        }
+
         if (
             is_array($requestHandler)
-            && count($requestHandler) === 2
+            && count($requestHandler) >= 2
             && is_string($requestHandler[0])
             && is_string($requestHandler[1])
         ) {
-            $callableName = $requestHandler[0] . '::' . $requestHandler[1];
-            $requestHandler = $this->container->get($callableName);
+            $action = $requestHandler[1];
+            $requestHandler = $this->container->get($requestHandler[0]);
         }
 
         if ($requestHandler instanceof MiddlewareInterface) {
             return $requestHandler->process($request, $handler);
+        }
+
+        if ($requestHandler instanceof RequestHandlerInterface) {
+            return $requestHandler->handle($request);
+        }
+
+        if ($requestHandler instanceof Controller && isset($action)) {
+            return $requestHandler->{$action}($request, $handler);
         }
 
         throw new RuntimeException(sprintf('Invalid request handler: %s', gettype($requestHandler)));

@@ -2,67 +2,25 @@
 
 namespace Codevia\Venus;
 
-use Codevia\Venus\Utils\Http\Input\InputInterface;
-use DI\Container;
-use DI\ContainerBuilder;
-use FastRoute\Dispatcher as FastRouteDispatcher;
+use Codevia\Venus\Middleware\Permission;
+use Codevia\Venus\Middleware\RequestHandler;
 use Laminas\Diactoros\ServerRequestFactory;
 use Middlewares\ErrorFormatter\JsonFormatter;
 use Middlewares\ErrorHandler;
 use Middlewares\Utils\Dispatcher;
-use Middlewares\RequestHandler;
-use Psr\Container\ContainerInterface;
 
 class Application
 {
-    private InputInterface $inputAdapter;
-    private FastRouteDispatcher $dispatcher;
-    private ?ContainerInterface $container = null;
+    private Config $config;
 
-    /**
-     * Set the input adapter that corresponds to the format you are working with.
-     *
-     * @param InputInterface $inputAdapter
-     * @return Application
-     */
-    public function setInputAdapter(InputInterface $inputAdapter): self
+    public function __construct()
     {
-        $this->inputAdapter = $inputAdapter;
-        return $this;
+        $this->config = new Config();
     }
 
-    /**
-     * Set the dispatcher with route definitions.
-     *
-     * @param FastRouteDispatcher $dispatcher
-     * @return Application
-     */
-    public function setDispatcher(FastRouteDispatcher $dispatcher): self
+    public function getConfig(): Config
     {
-        $this->dispatcher = $dispatcher;
-        return $this;
-    }
-
-    /**
-     * Set the container to use with middlewares.
-     *
-     * @param ContainerInterface $container
-     * @return Application
-     */
-    public function setContainer(ContainerInterface $container): self
-    {
-        $this->container = $container;
-        return $this;
-    }
-
-    public function getContainer(): ContainerInterface | Container
-    {
-        if ($this->container === null) {
-            $builder = new ContainerBuilder();
-            $builder->useAnnotations(true);
-            $this->container = $builder->build();
-        }
-        return $this->container;
+        return $this->config;
     }
 
     /**
@@ -72,29 +30,38 @@ class Application
      */
     public function run(): void
     {
+        $requestBody = $this->getConfig()->getInputAdapter()::getParsedBody();
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
             $_GET,
-            $this->inputAdapter::getParsedBody(),
+            $requestBody,
             $_COOKIE,
             $_FILES
         );
 
-        $dispatcher = new Dispatcher([
-            new \Middlewares\Emitter(),
+        $queue = [];
 
-            new ErrorHandler([
-                new JsonFormatter()
-            ]),
+        $queue[] = new \Middlewares\Emitter();
+        $queue[] = new ErrorHandler([new JsonFormatter()]);
+        $queue[] = (new \Middlewares\PhpSession())->name('VENUSSESSID')
+                ->regenerateId(60); // Prevent session fixation attacks
 
-            (new \Middlewares\PhpSession())->name('VENUSSESSID')
-                ->regenerateId(60), // Prevent session fixation attacks
+        $queue[] = (new \Middlewares\FastRoute(
+            $this->getConfig()->getDispatcher()
+        ))->attribute('handler');
 
-            (new \Middlewares\FastRoute($this->dispatcher))->attribute('handler'),
+        // Use router access permission check
+        if ($this->getConfig()->usePermission()) {
+            $queue[] = (new Permission(
+                $this->getConfig()->getContainer()
+            ))->handlerAttribute('handler');
+        }
 
-            (new RequestHandler($this->getContainer()))->handlerAttribute('handler'),
-        ]);
+        $queue[] = (new RequestHandler(
+            $this->getConfig()->getContainer()
+        ))->handlerAttribute('handler');
 
+        $dispatcher = new Dispatcher($queue);
         $dispatcher->dispatch($request);
     }
 }
