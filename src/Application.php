@@ -29,10 +29,11 @@ class Application
      */
     public function run(): void
     {
+        $requestBody = $this->getConfig()->getInputAdapter()::getParsedBody();
         $request = ServerRequestFactory::fromGlobals(
             $_SERVER,
             $_GET,
-            $this->getConfig()->getInputAdapter()::getParsedBody(),
+            $requestBody,
             $_COOKIE,
             $_FILES
         );
