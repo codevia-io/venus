@@ -12,7 +12,7 @@
             "dist": {
                 "type": "path",
                 "url": "../..",
-                "reference": "33b0694c97ee9ce3a3508e34a028c8e7af5941b0"
+                "reference": "4952ae54e17be8e145a4ea89f761ae71a85f037e"
             },
             "require": {
                 "doctrine/annotations": "^1.13",

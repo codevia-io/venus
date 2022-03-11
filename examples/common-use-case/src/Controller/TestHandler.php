@@ -1,6 +1,6 @@
 <?php
 
-namespace Example;
+namespace Example\Controller;
 
 use Codevia\Venus\Controller\Controller;
 use DI\Annotation\Inject;
