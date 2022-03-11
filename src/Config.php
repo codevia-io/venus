@@ -15,6 +15,7 @@ class Config
     private Dispatcher $dispatcher;
     private ?ContainerInterface $container = null;
     private PermissionList $permissions;
+    private bool $usePermissions = false;
 
     public function getInputAdapter(): InputInterface
     {
@@ -75,6 +76,12 @@ class Config
     public function setPermisions(PermissionList $permissions)
     {
         $this->permissions = $permissions;
+        $this->usePermissions = true;
         $this->getContainer()->set(PermissionList::class, $this->permissions);
+    }
+
+    public function usePermission(): bool
+    {
+        return $this->usePermissions;
     }
 }

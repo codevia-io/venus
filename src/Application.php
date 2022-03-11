@@ -50,9 +50,12 @@ class Application
             $this->getConfig()->getDispatcher()
         ))->attribute('handler');
 
-        $queue[] = (new Permission(
-            $this->getConfig()->getContainer()
-        ))->handlerAttribute('handler');
+        // Use router access permission check
+        if ($this->getConfig()->usePermission()) {
+            $queue[] = (new Permission(
+                $this->getConfig()->getContainer()
+            ))->handlerAttribute('handler');
+        }
 
         $queue[] = (new RequestHandler(
             $this->getConfig()->getContainer()
