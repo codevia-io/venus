@@ -37,21 +37,22 @@ class Application
             $_FILES
         );
 
-        $dispatcher = new Dispatcher([
-            new \Middlewares\Emitter(),
+        $queue = [];
 
-            new ErrorHandler([
-                new JsonFormatter()
-            ]),
+        $queue[] = new \Middlewares\Emitter();
+        $queue[] = new ErrorHandler([new JsonFormatter()]);
+        $queue[] = (new \Middlewares\PhpSession())->name('VENUSSESSID')
+                ->regenerateId(60); // Prevent session fixation attacks
 
-            (new \Middlewares\PhpSession())->name('VENUSSESSID')
-                ->regenerateId(60), // Prevent session fixation attacks
+        $queue[] = (new \Middlewares\FastRoute(
+            $this->getConfig()->getDispatcher()
+        ))->attribute('handler');
 
-            (new \Middlewares\FastRoute($this->getConfig()->getDispatcher()))->attribute('handler'),
+        $queue[] = (new RequestHandler(
+            $this->getConfig()->getContainer()
+        ))->handlerAttribute('handler');
 
-            (new RequestHandler($this->getConfig()->getContainer()))->handlerAttribute('handler'),
-        ]);
-
+        $dispatcher = new Dispatcher([$queue]);
         $dispatcher->dispatch($request);
     }
 }
