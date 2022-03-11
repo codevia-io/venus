@@ -2,7 +2,7 @@
 
 use Example\Controller\LoginController;
 use Example\Controller\TestHandler;
-use Example\Permission as P;
+use Example\Permission as P; // Shorthand so your lines wont be too long
 use FastRoute\RouteCollector;
 
 return \FastRoute\simpleDispatcher(function (RouteCollector $r) {
