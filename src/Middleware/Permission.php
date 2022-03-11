@@ -86,14 +86,19 @@ class Permission implements MiddlewareInterface
 
         if (
             is_array($requestHandler)
-            && count($requestHandler) > 2
-            && is_int($requestHandler[2])
+            && count($requestHandler) >= 2
         ) {
             /** @var PermissionList */
             $permissions = $this->container->get(PermissionList::class);
             $permissions->checkValidity();
 
-            $isValid = $this->checkMask($requestHandler[2], $_SESSION['permission'] ?? 0);
+            $permissionLevel = $_SESSION['permission'] ?? $permissions->getDefaultLevel();
+
+            if (!isset($requestHandler[2])) {
+                $requestHandler[2] = $permissions->getDefaultLevel();
+            }
+
+            $isValid = $this->checkMask($requestHandler[2], $permissionLevel);
 
             if (!$isValid) {
                 throw new HttpErrorException("You don't have permission to access this resource.", 403);

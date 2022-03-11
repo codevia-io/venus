@@ -4,6 +4,18 @@ namespace Codevia\Venus\Utils\Permission;
 
 class PermissionList
 {
+    private int $defaultLevel;
+
+    public function __construct(int $defaultLevel)
+    {
+        $this->defaultLevel = $defaultLevel;
+    }
+
+    public function getDefaultLevel(): int
+    {
+        return $this->defaultLevel;
+    }
+
     /**
      * Check if masks constants are bitwise valid.
      */
