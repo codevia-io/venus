@@ -4,8 +4,45 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "55841f7fdf054ce78abe02a8728111e7",
+    "content-hash": "be2eb131ed9da278aa9c6065efb71cb2",
     "packages": [
+        {
+            "name": "codevia/venus-utils",
+            "version": "v1.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/codevia-io/venus-utils.git",
+                "reference": "b3ed2c7d1b22be2ad84360eef27772008e4ccd3e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/codevia-io/venus-utils/zipball/b3ed2c7d1b22be2ad84360eef27772008e4ccd3e",
+                "reference": "b3ed2c7d1b22be2ad84360eef27772008e4ccd3e",
+                "shasum": ""
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Codevia\\Venus\\Utils\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Vincent Bathelier",
+                    "email": "53569029+d9beuD@users.noreply.github.com"
+                }
+            ],
+            "description": "Venus framework toolbox",
+            "support": {
+                "issues": "https://github.com/codevia-io/venus-utils/issues",
+                "source": "https://github.com/codevia-io/venus-utils/tree/v1.0.0"
+            },
+            "time": "2022-04-20T14:46:34+00:00"
+        },
         {
             "name": "doctrine/annotations",
             "version": "1.13.2",
@@ -2933,5 +2970,5 @@
         "php": "^8.0"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }
