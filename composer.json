@@ -15,7 +15,9 @@
         "middlewares/php-session": "^3.1",
         "php-di/php-di": "^6.3",
         "doctrine/annotations": "^1.13",
-        "codevia/venus-utils": "^1.0"
+        "codevia/venus-utils": "^1.0",
+        "symfony/property-access": "^6.0",
+        "symfony/serializer": "^6.0"
     },
     "autoload": {
         "psr-4": {
