@@ -50,6 +50,8 @@ class Application
             $this->getConfig()->getDispatcher()
         ))->attribute('handler');
 
+        $queue = array_merge($queue, $this->getConfig()->getMiddlewares());
+
         // Use router access permission check
         if ($this->getConfig()->usePermission()) {
             $queue[] = (new Permission(
