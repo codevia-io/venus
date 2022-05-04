@@ -8,6 +8,7 @@ use DI\Container;
 use DI\ContainerBuilder;
 use FastRoute\Dispatcher;
 use Psr\Container\ContainerInterface;
+use Psr\Http\Server\MiddlewareInterface;
 
 class Config
 {
@@ -16,6 +17,8 @@ class Config
     private ?ContainerInterface $container = null;
     private PermissionList $permissions;
     private bool $usePermissions = false;
+    /** @var MiddlewareInterface[] */
+    private array $middlewares = [];
 
     public function getInputAdapter(): InputInterface
     {
@@ -83,5 +86,18 @@ class Config
     public function usePermission(): bool
     {
         return $this->usePermissions;
+    }
+
+    public function addMiddlware(MiddlewareInterface $middleware)
+    {
+        $this->middlewares[] = $middleware;
+    }
+
+    /**
+     * @return MiddlewareInterface[]
+     */
+    public function getMiddlewares(): array
+    {
+        return $this->middlewares;
     }
 }
